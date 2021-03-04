@@ -39,7 +39,6 @@ session.headers.update(
 		#'x-guest-token': '1366808088741900288'
         #no need if my cookie saved after login
 	}
-
 )
 
 
