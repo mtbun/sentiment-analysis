@@ -23,23 +23,21 @@ def clean_data(df):
     stopwords_en = stopwords.words('english')
     tweet_stm = []
     for tweet in df["tweet"]:
-        # 2.1 remove old style tweets
+
         tweet = re.sub(r'^RT[/s]+', '', tweet)
         tweet = re.sub(r"’", '', tweet)
-        # 2.2 remove links
+
         tweet = re.sub(r'(https|http)?:\/\/(\w|\.|\/|\?|\=|\&|\%)*\b', '', tweet, flags=re.MULTILINE)
-        # 2.3 remove hashtages (only the # mark)
+
         tweet = re.sub(r'#', '', tweet)
-		# 2.4 remove '
+
         tweet = re.sub(r"’", '', tweet)
         tweet = re.sub(r'…', '', tweet)
         tweet = re.sub(r':', '', tweet)
-        # 2.5 instantaite tokenizer class
+
         tokenizer = TweetTokenizer(preserve_case=False, strip_handles=True, reduce_len=True)
-        # 2.5.1 tokenize tweets
+
         tweet_tok = tokenizer.tokenize(tweet)
-        # 2.6 remove stopwrods and punctuation
-        # to see the stop words
 
         tweet_clean = []
         for word in tweet_tok:
@@ -61,28 +59,27 @@ def clean_data2(tweet):
     stopwords_en = stopwords.words('english')
     tweet_stm = []
     for tweet in tweet:
-		# 2.1 remove old style tweets
+
         tweet = re.sub(r'^RT[/s]+', '', tweet)
         tweet = re.sub(r"’", '', tweet)
-        # 2.2 remove links
+
         tweet = re.sub(r'(https|http)?:\/\/(\w|\.|\/|\?|\=|\&|\%)*\b', '', tweet, flags=re.MULTILINE)
-        # 2.3 remove hashtages (only the # mark)
+
         tweet = re.sub(r'#', '', tweet)
-	    # 2.4 remove '
+
         tweet = re.sub(r"’", '', tweet)
         tweet = re.sub(r'…', '', tweet)
         tweet = re.sub(r':', '', tweet)
-        # 2.5 instantaite tokenizer class
+
         tokenizer = TweetTokenizer(preserve_case=False, strip_handles=True, reduce_len=True)
-        # 2.5.1 tokenize tweets
+
         tweet_tok = tokenizer.tokenize(tweet)
-        # 2.6 remove stopwrods and punctuation
-        # to see the stop words
+
         tweet_clean = []
         for word in tweet_tok:
             if (word not in stopwords_en and word not in string.punctuation):
                 tweet_clean.append(word)
-        # stem tweets
+
         for word in tweet_clean:
             stem_word = stemmer.stem(word)
             tweet_stm.append(stem_word)
@@ -141,22 +138,10 @@ y_test = np.array(y_test).reshape(-1,1)
 
 
 def predict_tweet(tweet, freqs, theta):
-	'''
-	Input:
-		tweet: a string
-		freqs: a dictionary corresponding to the frequencies of each tuple (word, label)
-		theta: (3,1) vector of weights
-	Output:
-		y_pred: the probability of a tweet being positive or negative
-	'''
-	### START CODE HERE (REPLACE INSTANCES OF 'None' with your code) ###
 
-	# extract the features of the tweet and store it into x
 	x = extract_features(tweet, freqs)
 
-	# make the prediction using x and theta
 	y_pred = sigmoid(np.dot(x, theta))
-	### END CODE HERE ###
 	return y_pred[0][-1]
 
 
@@ -172,29 +157,19 @@ def test_logistic_regression(test_x, test_y, freqs, theta,should):
         accuracy: (# of tweets classified correctly) / (total # of tweets)
     """
 
-    ### START CODE HERE (REPLACE INSTANCES OF 'None' with your code) ###
 
-    # the list for storing predictions
     y_hat = []
     for tweet in test_x:
-        # get the label prediction for the tweet
         y_pred = predict_tweet(tweet, freqs, theta)
 
         if y_pred > should:
-            # append 0 to the list
             y_hat.append(1)
         else:
-            # append 1.0 to the list
             y_hat.append(0)
-
-
-    # With the above implementation, y_hat is a list, but test_y is (m,1) array
-    # convert both to one-dimensional arrays in order to compare them using the '==' operator
 
 
     accuracy = (y_hat==np.squeeze(test_y)).sum()/len(test_x)
 
-    ### END CODE HERE ###
 
     return accuracy
 
@@ -230,14 +205,6 @@ def gradientDescent(x, y, theta, alpha, num_iters):
 	J =  float(J)
 	return J, theta, per
 
-'''
-Extracting the features:
-Given a list of tweets, extract the features and store them in a matrix. You will extract two features.
-The first feature is the number of positive words in a tweet.
-The second feature is the number of negative words in a tweet.
-Then train your logistic regression classifier on these features.
-Test the classifier on a validation set.
-'''
 
 feqs = pd.read_pickle("data_freqs.pkl")
 
@@ -262,12 +229,14 @@ train_x = np.zeros((len(X), 3))
 for i in range(len(X)):
     train_x[i, :]= extract_features(X[i], feqs)
 
-# training labels corresponding to X
 train_y = Y
-# Apply gradient descent
+
+#gradient descent
+
 J, theta,per = gradientDescent(train_x, train_y, np.zeros((3, 1)), 0.000001, 3487)
 np.save("weights_yeni.npy",theta)
 theta3= np.load("weights_yeni.npy")
+
 
 max_value = max(per)
 max_index = per.index(max_value)
