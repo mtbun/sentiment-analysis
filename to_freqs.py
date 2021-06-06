@@ -7,38 +7,26 @@ import re
 import string
 import pickle
 
-#1-Calling the data from path
-data_hpy ="raw_datas/happy.csv"
+#Calling the data
+data_hpy ="happy.csv"
 df_hp = pd.read_csv(data_hpy)
 
-data_sad ="raw_datas/sad.csv"
+data_sad ="sad.csv"
 df_sad = pd.read_csv(data_sad)
 
-data_ex ="raw_datas/exciting.csv"
-df_ex = pd.read_csv(data_ex)
 
-data_an ="raw_datas/sad.csv"
-df_an = pd.read_csv(data_an)
-
-
-#2-Preparing the data
+#Preparing the data
 def clean_data(df):
     stemmer = PorterStemmer()
     stopwords_en = stopwords.words('english')
     tweet_stm = []
     for tweet in df["tweet"]:
-        # 2.1 remove old style tweets
         tweet = re.sub(r'^RT[/s]+', '', tweet)
-        # 2.2 remove links
         tweet = re.sub(r'(https|http)?:\/\/(\w|\.|\/|\?|\=|\&|\%)*\b', '', tweet, flags=re.MULTILINE)
-        # 2.3 remove hashtages (only the # mark)
         tweet = re.sub(r'#', '', tweet)
-        # 2.4 instantaite tokenizer class
         tokenizer = TweetTokenizer(preserve_case=False, strip_handles=True, reduce_len=True)
-        # 2.4.1 tokenize tweets
         tweet_tok = tokenizer.tokenize(tweet)
-        # 2.5 remove stopwrods and punctuation
-        # to see the stop words
+
         tweet_clean = []
         for word in tweet_tok:
             if (word not in stopwords_en and word not in string.punctuation):
@@ -52,10 +40,8 @@ def clean_data(df):
 
 hpy = clean_data(df_hp)
 sad = clean_data(df_sad)
-ex = clean_data(df_ex)
-an = clean_data(df_an)
 
-all_tw = hpy+sad+ex+an
+all_tw = hpy+sad
 
 def freq(tweets,label):
     ylis = np.squeeze(label).tolist()
@@ -68,12 +54,10 @@ def freq(tweets,label):
             freqs[pair]  =1
     return freqs
 
-label_1=np.append(np.zeros((len(hpy))),np.ones((len(sad))))
-label_2 = np.append(np.ones((len(ex)))*2,np.ones((len(an)))*3)
-labels = np.append(label_1,label_2)
+labels=np.append(np.zeros((len(hpy))),np.ones((len(sad))))
 frq = freq(all_tw,labels)
 
 
-a_file = open("data.pkl", "wb")
+a_file = open("data_freqs.pkl", "wb")
 pickle.dump(frq, a_file)
 a_file.close()
