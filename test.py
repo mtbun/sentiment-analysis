@@ -177,12 +177,7 @@ for tweet in ["great day ",
 				"happy birthday dady",
 			  "my friend died",
 				"very bad day",
-				" i missed the train",
-				"i love this place",
-				"i get the corona ",
-				"this is amazing",
-                "arap is a good guy",
-                "i passed my exam"
+				"i love this place"
 			  ]:
 
 	sonuc = predict_tweet(tweet, feqs, theta3)
